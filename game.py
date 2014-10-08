@@ -21,17 +21,31 @@ class Character(GameElement):
 
     def keyboard_handler(self, symbol, modifier):
         if symbol == key.UP:
-            self.board.draw_msg("%s says: 'You pressed up!'") % self.IMAGE
+            self.board.draw_msg("%s says: 'You pressed up!'" % self.IMAGE)
+            next_y = self.y -1
+            self.board.del_el(self.x, self.y)
+            self.board.set_el(self.x, next_y,self)
         elif symbol == key.SPACE:
             self.board.erase_msg()
         elif symbol == key.DOWN:
-            self.board.draw_msg("%s says: 'You pressed down!'") % self.IMAGE
+            self.board.draw_msg("%s says: 'You pressed down!'" % self.IMAGE)
+            next_y = self.y +1
+            self.board.del_el(self.x, self.y)
+            self.board.set_el(self.x, next_y,self)
         elif symbol == key.LEFT:
-            self.board.draw_msg("%s says: 'You pressed left!'") % self.IMAGE
+            self.board.draw_msg("%s says: 'You pressed left!'" % self.IMAGE)
+            next_x = self.x -1
+            self.board.del_el(self.x, self.y)
+            self.board.set_el(next_x, self.y,self)
         elif symbol == key.RIGHT:
-            self.board.draw_msg("%s says: 'You pressed right!'") % self.IMAGE
+            self.board.draw_msg("%s says: 'You pressed right!'" % self.IMAGE)
+            next_x = self.x + 1
+            self.board.del_el(self.x, self.y)
+            self.board.set_el(next_x, self.y,self)
         else:
             self.board.draw_msg("%s says: 'I don't get it!'") % self.IMAGE
+
+
 ####   End class definitions    ####
 
 def initialize():
