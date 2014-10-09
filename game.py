@@ -9,8 +9,8 @@ GAME_BOARD = None
 DEBUG = False
 ######################
 
-GAME_WIDTH = 5
-GAME_HEIGHT = 5
+GAME_WIDTH = 8
+GAME_HEIGHT = 8
 
 #### Put class definitions here ####
 class Rock(GameElement):
@@ -78,6 +78,38 @@ class Character(GameElement):
                     self.board.set_el(next_x, next_y, self)
 
 
+class NewFriend (Character):
+    IMAGE = 'Girl'
+    def keyboard_handler(self, symbol, modifier):
+        direction = None
+        if symbol == key._4:
+            direction = "left"
+        elif symbol ==  key._6:
+            direction = "right"
+        elif symbol == key._2:
+            direction = "down"
+        elif symbol == key._8:
+            direction = "up"
+
+        self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
+
+
+        if direction:
+            next_location = self.next_pos(direction)
+            if next_location:
+                next_x = next_location[0]
+                next_y = next_location[1]
+
+                existing_el = self.board.get_el(next_x, next_y)
+                if existing_el:
+                    existing_el.interact(self)
+
+                if existing_el and existing_el.SOLID:
+                    self.board.draw_msg("There's something in my way!")
+                elif existing_el is None or not existing_el.SOLID:
+                    self.board.del_el(self.x, self.y)
+                    self.board.set_el(next_x, next_y, self)
+
 class ShinyThings(GameElement):
     IMAGE = "BlueGem"
     SOLID = False
@@ -108,6 +140,10 @@ def initialize():
     orangegem = OrangeGem()
     GAME_BOARD.register(orangegem)
     GAME_BOARD.set_el(4,4, orangegem)
+
+    newgirl = NewFriend()
+    GAME_BOARD.register(newgirl)
+    GAME_BOARD.set_el(3,3, newgirl)
 
     rock_positions = [
         (2,1),
