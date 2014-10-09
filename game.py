@@ -70,12 +70,30 @@ class Character(GameElement):
                 existing_el = self.board.get_el(next_x, next_y)
                 if existing_el:
                     existing_el.interact(self)
-
+                    
                 if existing_el and existing_el.SOLID:
                     self.board.draw_msg("There's something in my way!")
+
                 elif existing_el is None or not existing_el.SOLID:
                     self.board.del_el(self.x, self.y)
                     self.board.set_el(next_x, next_y, self)
+
+
+class NewCat(GameElement):
+    IMAGE = 'Cat'
+    SOLID = True
+
+    def __init__(self):
+        self.inventory = []
+
+    def interact(self, player):
+        if len(player.inventory) > 0:
+            gem = player.inventory.pop()
+            self.inventory.append(gem)
+
+            GAME_BOARD.draw_msg("The CAT just acquired a gem! The cat have %d items! CATITUDE"%(len(self.inventory)))
+        else:
+            GAME_BOARD.draw_msg("Ouch! The cat sratched you. Go away!")
 
 
 class NewFriend (Character):
@@ -130,6 +148,10 @@ def initialize():
     newgirl = NewFriend()
     GAME_BOARD.register(newgirl)
     GAME_BOARD.set_el(3,3, newgirl)
+
+    thecat = NewCat()
+    GAME_BOARD.register(thecat)
+    GAME_BOARD.set_el(7,5, thecat)
 
     rock_positions = [
         (2,1),
