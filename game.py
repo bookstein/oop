@@ -20,6 +20,12 @@ class Rock(GameElement):
 class Character(GameElement):
     IMAGE = "Princess"
 
+    def __init__(self):
+        GameElement.__init__(self)
+        self.inventory = []
+
+
+
     def next_pos(self, direction):
         if direction == "up":
             return (self.x, self.y -1)
@@ -62,6 +68,8 @@ class Character(GameElement):
                 next_y = next_location[1]
 
                 existing_el = self.board.get_el(next_x, next_y)
+                if existing_el:
+                    existing_el.interact(self)
 
                 if existing_el and existing_el.SOLID:
                     self.board.draw_msg("There's something in my way!")
@@ -70,9 +78,18 @@ class Character(GameElement):
                     self.board.set_el(next_x, next_y, self)
 
 
+
+
 class ShinyThings(GameElement):
     IMAGE = "BlueGem"
     SOLID = False
+
+    def interact(self, player):
+        player.inventory.append(self)
+        GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!"%(len(player.inventory)))
+
+
+
 
 
 
