@@ -40,13 +40,13 @@ class Character(GameElement):
     def keyboard_handler(self, symbol, modifier):
         direction = None
         if symbol == key.UP:
-            direction = "up"
+            self.move_character("up")
         elif symbol ==  key.DOWN:
-            direction = "down"
+            self.move_character("down")
         elif symbol == key.LEFT:
-            direction = "left"
+            self.move_character("left")
         elif symbol == key.RIGHT:
-            direction = "right"
+            self.move_character("right")
 
         self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
         
@@ -60,7 +60,7 @@ class Character(GameElement):
         #         self.board.set_el(next_x, next_y, self)
 
 
-
+    def move_character(self, direction):
         if direction:
             next_location = self.next_pos(direction)
             if next_location:
@@ -80,35 +80,21 @@ class Character(GameElement):
 
 class NewFriend (Character):
     IMAGE = 'Girl'
+
     def keyboard_handler(self, symbol, modifier):
         direction = None
-        if symbol == key._4:
-            direction = "left"
-        elif symbol ==  key._6:
-            direction = "right"
-        elif symbol == key._2:
-            direction = "down"
-        elif symbol == key._8:
-            direction = "up"
+        if symbol == key.E:
+            self.move_character("up")
+        elif symbol ==  key.C:
+            self.move_character("down")
+        elif symbol == key.S:
+            self.move_character("left")
+        elif symbol == key.F:
+            self.move_character("right")
 
         self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
 
 
-        if direction:
-            next_location = self.next_pos(direction)
-            if next_location:
-                next_x = next_location[0]
-                next_y = next_location[1]
-
-                existing_el = self.board.get_el(next_x, next_y)
-                if existing_el:
-                    existing_el.interact(self)
-
-                if existing_el and existing_el.SOLID:
-                    self.board.draw_msg("There's something in my way!")
-                elif existing_el is None or not existing_el.SOLID:
-                    self.board.del_el(self.x, self.y)
-                    self.board.set_el(next_x, next_y, self)
 
 class ShinyThings(GameElement):
     IMAGE = "BlueGem"
