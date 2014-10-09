@@ -78,8 +78,6 @@ class Character(GameElement):
                     self.board.set_el(next_x, next_y, self)
 
 
-
-
 class ShinyThings(GameElement):
     IMAGE = "BlueGem"
     SOLID = False
@@ -89,9 +87,13 @@ class ShinyThings(GameElement):
         GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!"%(len(player.inventory)))
 
 
+class OrangeGem(ShinyThings):
+    IMAGE = "OrangeGem"
+    SOLID = True
 
-
-
+    def interact(self, player):
+        player.board.del_el(player.x, player.y)
+        player.board.set_el(0, 0, player)
 
 
 ####   End class definitions    ####
@@ -102,6 +104,10 @@ def initialize():
     gem = ShinyThings()
     GAME_BOARD.register(gem)
     GAME_BOARD.set_el(3,1, gem)
+
+    orangegem = OrangeGem()
+    GAME_BOARD.register(orangegem)
+    GAME_BOARD.set_el(4,4, orangegem)
 
     rock_positions = [
         (2,1),
