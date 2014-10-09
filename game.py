@@ -15,6 +15,7 @@ GAME_HEIGHT = 5
 #### Put class definitions here ####
 class Rock(GameElement):
     IMAGE = "Rock"
+    SOLID = True
 
 class Character(GameElement):
     IMAGE = "Princess"
@@ -43,14 +44,36 @@ class Character(GameElement):
 
         self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
         
+        # if direction:
+        #     next_location = self.next_pos(direction)
+        
+        #     if next_location:
+        #         next_x = next_location[0]
+        #         next_y = next_location[1]
+        #         self.board.del_el(self.x, self.y)
+        #         self.board.set_el(next_x, next_y, self)
+
+
+
         if direction:
             next_location = self.next_pos(direction)
-        
             if next_location:
                 next_x = next_location[0]
                 next_y = next_location[1]
-                self.board.del_el(self.x, self.y)
-                self.board.set_el(next_x, next_y, self)
+
+                existing_el = self.board.get_el(next_x, next_y)
+
+                if existing_el and existing_el.SOLID:
+                    self.board.draw_msg("There's something in my way!")
+                elif existing_el is None or not existing_el.SOLID:
+                    self.board.del_el(self.x, self.y)
+                    self.board.set_el(next_x, next_y, self)
+
+
+
+
+
+
 
 ####   End class definitions    ####
 
@@ -58,9 +81,9 @@ def initialize():
     """Put game initialization code here"""
     rock_positions = [
         (2,1),
-        (1,2),
+        (0,2),
         (3,2),
-        (2,3)
+        (0,3)
     ]
 
     rocks = []
