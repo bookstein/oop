@@ -48,35 +48,35 @@ class Character(GameElement):
         elif symbol == key.RIGHT:
             self.move_character("right")
 
-        self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
+        # self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
         
-        # if direction:
-        #     next_location = self.next_pos(direction)
-        
-        #     if next_location:
-        #         next_x = next_location[0]
-        #         next_y = next_location[1]
-        #         self.board.del_el(self.x, self.y)
-        #         self.board.set_el(next_x, next_y, self)
+     
 
 
     def move_character(self, direction):
-        if direction:
-            next_location = self.next_pos(direction)
-            if next_location:
-                next_x = next_location[0]
-                next_y = next_location[1]
+        next_location = self.next_pos(direction)
+        if next_location:
+            next_x = next_location[0]
+            next_y = next_location[1]
 
-                existing_el = self.board.get_el(next_x, next_y)
-                if existing_el:
-                    existing_el.interact(self)
+            if next_x < 0 or next_y < 0 or next_x == 8 or next_y == 8:
+                self.board.draw_msg("That's out of bounds! Can't go there!")
+                return None
 
-                if existing_el and existing_el.SOLID:
-                    self.board.draw_msg("There's something in my way!")
+            existing_el = self.board.get_el(next_x, next_y)
+            print existing_el
 
-                elif existing_el is None or not existing_el.SOLID:
-                    self.board.del_el(self.x, self.y)
-                    self.board.set_el(next_x, next_y, self)
+            if existing_el:
+                existing_el.interact(self)
+                print self
+                print "I found you!"
+
+            if existing_el and existing_el.SOLID:
+                pass
+ 
+            elif existing_el is None or not existing_el.SOLID:
+                self.board.del_el(self.x, self.y)
+                self.board.set_el(next_x, next_y, self)
 
 
 class NewCat(GameElement):
@@ -84,59 +84,12 @@ class NewCat(GameElement):
     SOLID = True
 
 
-    def move_character(self, direction):
-        if direction:
-            next_location = self.next_pos(direction)
-        
-
-
-
-            if next_location:
-                next_x = next_location[0]
-                next_y = next_location[1]
-                existing_el = self.board.get_el(next_x, next_y)
-                
-                if exisiting_el.IMAGE == 'Cat':
-                    exisiting_el.interact(playe) 
-                    self.board.draw_msg("There's something in my way!")
-
-                if existing_el:
-                    existing_el.interact(self)
-
-                if existing_el and existing_el.SOLID:
-                    self.board.draw_msg("There's something in my way!")
-
-
-
-
-
-                elif existing_el is None or not existing_el.SOLID:
-                    self.board.del_el(self.x, self.y)
-                    self.board.set_el(next_x, next_y, self)
-
-
-
-
-
-
-
-
-
-
-
     def __init__(self):
         self.inventory = []
 
     def interact(self, player):
-        
-
-        # update players position when it interacts with cat                                               0000000000000000000000000000000000-`q`
-
-
-
-
-
-
+        print "You found a cat"
+        # update players position when it interacts with cat                                               
         if len(player.inventory) > 0:
             gem = player.inventory.pop()
             self.inventory.append(gem)
@@ -164,7 +117,7 @@ class NewFriend (Character):
 
 
 
-class ShinyThings(GameElement):
+class CollectibleGems(GameElement):
     IMAGE = "BlueGem"
     SOLID = False
 
@@ -173,7 +126,8 @@ class ShinyThings(GameElement):
         GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!"%(len(player.inventory)))
 
 
-class OrangeGem(ShinyThings):
+
+class OrangeGem(CollectibleGems):
     IMAGE = "OrangeGem"
     SOLID = True
 
@@ -187,7 +141,7 @@ class OrangeGem(ShinyThings):
 def initialize():
     """Put game initialization code here"""
     
-    gem = ShinyThings()
+    gem = CollectibleGems()
     GAME_BOARD.register(gem)
     GAME_BOARD.set_el(3,1, gem)
 
@@ -202,6 +156,21 @@ def initialize():
     thecat = NewCat()
     GAME_BOARD.register(thecat)
     GAME_BOARD.set_el(7,5, thecat)
+
+    gem2 = CollectibleGems()
+    gem2.IMAGE = 'GreenGem'
+    GAME_BOARD.register(gem2)
+    GAME_BOARD.set_el(6,6, gem2)
+
+    gem3 = CollectibleGems()
+    gem3.IMAGE  = 'OrangeGem'
+    GAME_BOARD.register(gem3)
+    GAME_BOARD.set_el(7,1, gem3)
+
+
+
+
+
 
     rock_positions = [
         (2,1),
