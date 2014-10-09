@@ -70,7 +70,9 @@ class Character(GameElement):
                     self.board.set_el(next_x, next_y, self)
 
 
-
+class ShinyThings(GameElement):
+    IMAGE = "BlueGem"
+    SOLID = False
 
 
 
@@ -79,11 +81,16 @@ class Character(GameElement):
 
 def initialize():
     """Put game initialization code here"""
+    
+    gem = ShinyThings()
+    GAME_BOARD.register(gem)
+    GAME_BOARD.set_el(3,1, gem)
+
     rock_positions = [
         (2,1),
-        (0,2),
+        (1,2),
         (3,2),
-        (0,3)
+        (2,3)
     ]
 
     rocks = []
@@ -96,6 +103,8 @@ def initialize():
 
     for rock in rocks:
         print rock
+
+    rocks[-1].SOLID = False
 
     player = Character()
     GAME_BOARD.register(player)
