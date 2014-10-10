@@ -15,6 +15,11 @@ DEBUG = False
 GAME_WIDTH = 8
 GAME_HEIGHT = 8
 
+GEM_COUNT = []
+
+    # if len(GEM_COUNT) == (len(player.inventory) + len(newgirl.inventory)):
+    #     game_over()
+
 #### Put class definitions here ####
 class Rock(GameElement):
     IMAGE = "Rock"
@@ -22,7 +27,7 @@ class Rock(GameElement):
    
 class Character(GameElement):
     IMAGE = "Princess"
-    can_steal = False
+    can_steal = True
     opponent = None
     SOLID = True
   
@@ -45,13 +50,7 @@ class Character(GameElement):
 
     def keyboard_handler(self, symbol, modifier):
         direction = None
-        
-        if symbol == key.RCTRL:
-            self.can_steal= True
-            print "NEVER RUNS"
-        if not symbol == key.RCTRL:
-            self.can_steal = True   # FIXME: should be False
-            print "ALWAYS"
+
         if symbol == key.UP:
             self.move_character("up")
         elif symbol ==  key.DOWN:
@@ -106,13 +105,21 @@ class Character(GameElement):
             self.inventory.append(gem)
 
             GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!"%(len(self.inventory)))
+        else: print GAME_BOARD.draw_msg("Try to get a gem!")
            
-        else:
-            GAME_BOARD.draw_msg("Ouch! The opponent just smacked you. Go away!")
+        if len(GEM_COUNT) == (len(self.opponent.inventory) + len(self.inventory)):
+            self.game_over()
 
 
     def display_inventory(self):
         print "%s has %d" % (self.IMAGE, len(self.inventory))
+
+    def game_over(self):
+        if len(self.inventory) > len(self.opponent.inventory):
+            print "Congrats %s" % self.IMAGE
+        else:
+            print "Congrats %s" % self.opponent.IMAGE
+
       
 
 class NewCat(GameElement):
@@ -134,6 +141,8 @@ class NewCat(GameElement):
         else:
             GAME_BOARD.draw_msg("Ouch! The cat scratched you. Go away!")
 
+        
+
 
 class NewFriend (Character):
     IMAGE = 'Girl'
@@ -143,11 +152,7 @@ class NewFriend (Character):
 
     def keyboard_handler(self, symbol, modifier):
         direction = None
-        
-        if symbol == key.A:
-            self.can_steal = True
-        if not symbol == key.A:
-            self.can_steal = True
+
         if symbol == key.E:
             self.move_character("up")
         elif symbol ==  key.D:
@@ -170,7 +175,8 @@ class CollectibleGems(GameElement):
         player.inventory.append(self)
         GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!"%(len(player.inventory)))\
 
-
+    def __init__(self):
+        GEM_COUNT.append(self)
 
 class OrangeGem(CollectibleGems):
     IMAGE = "OrangeGem"
@@ -180,12 +186,16 @@ class OrangeGem(CollectibleGems):
         player.board.del_el(player.x, player.y)
         player.board.set_el(0, 0, player)
 
+    def __init__(self):
+        return None
+
 
 ####   End class definitions    ####
 
 def initialize():
     """Put game initialization code here"""
-    
+    total_gems_collected = []
+
     gem = CollectibleGems()
     GAME_BOARD.register(gem)
     GAME_BOARD.set_el(3,1, gem)
@@ -237,9 +247,6 @@ def initialize():
     GAME_BOARD.register(gem6)
     GAME_BOARD.set_el(1,5, gem6)
 
-
-
-
     rock_positions = [
         (2,1),
         (1,2),
@@ -257,6 +264,8 @@ def initialize():
 
     for rock in rocks:
         print rock
+
+    print len(GEM_COUNT)
 
     rocks[-1].SOLID = False
 
