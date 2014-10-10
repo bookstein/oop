@@ -77,7 +77,7 @@ class Character(GameElement):
                 existing_el.interact(self)
                 # print "This element exists"
 
-                if Character.__class__ == 'Character' or Character.__class__ == 'NewFriend':
+                if isinstance(existing_el, Character):
                     if self.can_steal == True:
                         self.interact(existing_el)
                         # print type(existing_el)
