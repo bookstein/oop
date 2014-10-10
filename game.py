@@ -23,6 +23,8 @@ class Rock(GameElement):
 class Character(GameElement):
     IMAGE = "Princess"
     can_steal = False
+    opponent = None
+    SOLID = True
   
     def __init__(self):
         GameElement.__init__(self)
@@ -43,6 +45,13 @@ class Character(GameElement):
 
     def keyboard_handler(self, symbol, modifier):
         direction = None
+        
+        if symbol == key.RCTRL:
+            self.can_steal= True
+            print "NEVER RUNS"
+        if not symbol == key.RCTRL:
+            self.can_steal = True   # FIXME: should be False
+            print "ALWAYS"
         if symbol == key.UP:
             self.move_character("up")
         elif symbol ==  key.DOWN:
@@ -51,10 +60,10 @@ class Character(GameElement):
             self.move_character("left")
         elif symbol == key.RIGHT:
             self.move_character("right")
-        if symbol == key.RCTRL:
-            self.can_steal= True
-        if not symbol == key.RCTRL:
-            self.can_steal = False
+
+        # INTERACTION HAS HAPPENED
+
+        
         # self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
         
      
@@ -75,18 +84,13 @@ class Character(GameElement):
 
             self.display_inventory()
 
+            # if existing_el and isinstance(existing_el, Character):
+               
+            #     print "This element exists"   
 
-            if isinstance(existing_el, Character) and self.can_steal == True and existing_el.can_steal == False:
-                print self.can_steal
-                print "%s stealing from %s" % (self, existing_el)
-                self.interact(existing_el)
-                # print type(existing_el)
-                # print len(self.inventory)
-                # print len(existing_el.inventory)
-
-            elif existing_el and not isinstance(existing_el, Character):
+            if existing_el:
                 existing_el.interact(self)
-                # print "This element exists
+
 
             if existing_el and existing_el.SOLID:
                 pass
@@ -95,9 +99,10 @@ class Character(GameElement):
                 self.board.del_el(self.x, self.y)
                 self.board.set_el(next_x, next_y, self)
 
-    def interact(self, opponent):
-        if len(opponent.inventory) > 0:
-            gem = opponent.inventory.pop()
+    def interact(self, player):
+        print "interact", self.can_steal, self.opponent.inventory
+        if self.can_steal == True and len(self.opponent.inventory) > 0:
+            gem = self.opponent.inventory.pop()
             self.inventory.append(gem)
 
             GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!"%(len(self.inventory)))
@@ -138,6 +143,11 @@ class NewFriend (Character):
 
     def keyboard_handler(self, symbol, modifier):
         direction = None
+        
+        if symbol == key.A:
+            self.can_steal = True
+        if not symbol == key.A:
+            self.can_steal = True
         if symbol == key.E:
             self.move_character("up")
         elif symbol ==  key.D:
@@ -146,10 +156,7 @@ class NewFriend (Character):
             self.move_character("left")
         elif symbol == key.F:
             self.move_character("right")
-        if symbol == key.A:
-            self.can_steal = True
-        if not symbol == key.A:
-            self.can_steal = False
+        
 
         # self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
 
@@ -197,6 +204,9 @@ def initialize():
     GAME_BOARD.register(player)
     GAME_BOARD.set_el(2,2,player)
     print player
+
+    player.opponent = newgirl
+    newgirl.opponent = player
 
     thecat = NewCat()
     GAME_BOARD.register(thecat)
