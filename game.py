@@ -107,7 +107,7 @@ class Character(GameElement):
             GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!"%(len(self.inventory)))
         else: print GAME_BOARD.draw_msg("Try to get a gem!")
            
-        if len(GEM_COUNT) == (len(self.opponent.inventory) + len(self.inventory)):
+        if len(GEM_COUNT) == (len(self.opponent.inventory) + len(self.inventory)): # NEED to ADD CAT INVENTORY SOMEHOW
             self.game_over()
 
 
