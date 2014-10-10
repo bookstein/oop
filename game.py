@@ -53,6 +53,8 @@ class Character(GameElement):
             self.move_character("right")
         if symbol == key.RCTRL:
             self.can_steal= True
+        if not symbol == key.RCTRL:
+            self.can_steal = False
         # self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
         
      
@@ -73,16 +75,18 @@ class Character(GameElement):
 
             self.display_inventory()
 
-            if existing_el:
-                existing_el.interact(self)
-                # print "This element exists"
 
-                if isinstance(existing_el, Character):
-                    if self.can_steal == True:
-                        self.interact(existing_el)
-                        # print type(existing_el)
-                        # print len(self.inventory)
-                        # print len(existing_el.inventory)
+            if isinstance(existing_el, Character) and self.can_steal == True and existing_el.can_steal == False:
+                print self.can_steal
+                print "%s stealing from %s" % (self, existing_el)
+                self.interact(existing_el)
+                # print type(existing_el)
+                # print len(self.inventory)
+                # print len(existing_el.inventory)
+
+            elif existing_el and not isinstance(existing_el, Character):
+                existing_el.interact(self)
+                # print "This element exists
 
             if existing_el and existing_el.SOLID:
                 pass
@@ -144,6 +148,8 @@ class NewFriend (Character):
             self.move_character("right")
         if symbol == key.A:
             self.can_steal = True
+        if not symbol == key.A:
+            self.can_steal = False
 
         # self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
 
