@@ -4,6 +4,9 @@ from pyglet.window import key
 from core import GameElement
 import sys
 
+
+
+####FIXED GIRL SO SHE CAN STEAL ##################################################3
 #### DO NOT TOUCH ####
 GAME_BOARD = None
 DEBUG = False
@@ -74,7 +77,7 @@ class Character(GameElement):
                 existing_el.interact(self)
                 # print "This element exists"
 
-                if type(existing_el).__name__ == "Character" or type(existing_el).__name__ == "NewFriend":
+                if Character.__class__ == 'Character' or Character.__class__ == 'NewFriend':
                     if self.can_steal == True:
                         self.interact(existing_el)
                         # print type(existing_el)
@@ -202,6 +205,21 @@ def initialize():
     gem3.IMAGE  = 'OrangeGem'
     GAME_BOARD.register(gem3)
     GAME_BOARD.set_el(7,1, gem3)
+
+    gem4 = CollectibleGems()
+    gem4.IMAGE  = 'OrangeGem'
+    GAME_BOARD.register(gem4)
+    GAME_BOARD.set_el(7,3, gem4)
+
+    gem5 = CollectibleGems()
+    gem5.IMAGE  = 'GreenGem'
+    GAME_BOARD.register(gem5)
+    GAME_BOARD.set_el(2,6, gem5)
+
+    gem6 = CollectibleGems()
+    gem6.IMAGE  = 'BlueGem'
+    GAME_BOARD.register(gem6)
+    GAME_BOARD.set_el(1,5, gem6)
 
 
 
