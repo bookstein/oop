@@ -16,10 +16,11 @@ GAME_HEIGHT = 8
 class Rock(GameElement):
     IMAGE = "Rock"
     SOLID = True
-
+   
 class Character(GameElement):
     IMAGE = "Princess"
-
+    can_steal = False
+  
     def __init__(self):
         GameElement.__init__(self)
         self.inventory = []
@@ -47,7 +48,8 @@ class Character(GameElement):
             self.move_character("left")
         elif symbol == key.RIGHT:
             self.move_character("right")
-
+        if symbol == key.RCTRL:
+            self.can_steal= True
         # self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
         
      
@@ -64,12 +66,20 @@ class Character(GameElement):
                 return None
 
             existing_el = self.board.get_el(next_x, next_y)
-            print existing_el
+            # print existing_el
+
+            self.display_inventory()
 
             if existing_el:
                 existing_el.interact(self)
-                print self
-                print "I found you!"
+                # print "This element exists"
+
+                if type(existing_el).__name__ == "Character" or type(existing_el).__name__ == "NewFriend":
+                    if self.can_steal == True:
+                        self.interact(existing_el)
+                        # print type(existing_el)
+                        # print len(self.inventory)
+                        # print len(existing_el.inventory)
 
             if existing_el and existing_el.SOLID:
                 pass
@@ -78,6 +88,20 @@ class Character(GameElement):
                 self.board.del_el(self.x, self.y)
                 self.board.set_el(next_x, next_y, self)
 
+    def interact(self, opponent):
+        if len(opponent.inventory) > 0:
+            gem = opponent.inventory.pop()
+            self.inventory.append(gem)
+
+            GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!"%(len(self.inventory)))
+           
+        else:
+            GAME_BOARD.draw_msg("Ouch! The opponent just smacked you. Go away!")
+
+
+    def display_inventory(self):
+        print "%s has %d" % (self.IMAGE, len(self.inventory))
+      
 
 class NewCat(GameElement):
     IMAGE = 'Cat'
@@ -102,18 +126,23 @@ class NewCat(GameElement):
 class NewFriend (Character):
     IMAGE = 'Girl'
 
+    def display_inventory(self):
+        print "%s has %d" % (self.IMAGE, len(self.inventory))
+
     def keyboard_handler(self, symbol, modifier):
         direction = None
         if symbol == key.E:
             self.move_character("up")
-        elif symbol ==  key.C:
+        elif symbol ==  key.D:
             self.move_character("down")
         elif symbol == key.S:
             self.move_character("left")
         elif symbol == key.F:
             self.move_character("right")
+        if symbol == key.A:
+            self.can_steal = True
 
-        self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
+        # self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
 
 
 
@@ -123,7 +152,7 @@ class CollectibleGems(GameElement):
 
     def interact(self, player):
         player.inventory.append(self)
-        GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!"%(len(player.inventory)))
+        GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!"%(len(player.inventory)))\
 
 
 
@@ -150,8 +179,15 @@ def initialize():
     GAME_BOARD.set_el(4,4, orangegem)
 
     newgirl = NewFriend()
+    newgirl.name = "Girl"
     GAME_BOARD.register(newgirl)
     GAME_BOARD.set_el(3,3, newgirl)
+
+    player = Character()
+    player.name = "Princess"
+    GAME_BOARD.register(player)
+    GAME_BOARD.set_el(2,2,player)
+    print player
 
     thecat = NewCat()
     GAME_BOARD.register(thecat)
@@ -166,8 +202,6 @@ def initialize():
     gem3.IMAGE  = 'OrangeGem'
     GAME_BOARD.register(gem3)
     GAME_BOARD.set_el(7,1, gem3)
-
-
 
 
 
@@ -191,11 +225,6 @@ def initialize():
         print rock
 
     rocks[-1].SOLID = False
-
-    player = Character()
-    GAME_BOARD.register(player)
-    GAME_BOARD.set_el(2,2,player)
-    print player
 
     GAME_BOARD.draw_msg("This game is wicked awesome.")
 
